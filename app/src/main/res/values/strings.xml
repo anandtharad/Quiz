@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Quiz</string>
+    <string name="CorrectAnswer">Well Done! Correct Answer!!!!</string>
+    <string name="WrongAnswer">Oops! Wrong Answer</string>
+    <string name="q1">q1</string>
+    <string name="q2">q2</string>
+    <string name="q3">q3</string>
+    <string name="q4">q4</string>
+    <string name="q5">q5</string>
+    <string name="q6">q6</string>
+    <string name="q7">q7</string>
+    <string name="q8">q8</string>
+    <string name="q9">q9</string>
+    <string name="q10">q10</string>
+</resources>
