@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,9 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView difficulty;
     private Button btnTrue;
     private Button btnFalse;
+    private Button restartButton;
     private ProgressBar mProgressBar;
     private TextView mStats;
     private int userScore;
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         mTextQuestion = (TextView) findViewById(R.id.question);
         btnTrue = (Button) findViewById(R.id.trueButton);
         btnFalse = (Button) findViewById(R.id.falseButton);
+        restartButton = (Button) findViewById(R.id.restart_Button);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mStats = (TextView) findViewById(R.id.remainingQuestion);
         totalQuestions = (TextView) findViewById(R.id.totalQuestion);
@@ -121,6 +122,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 evaluateAnswer(false);
                 changeQuestionOnButtonClick();
+            }
+        });
+
+        restartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
 
