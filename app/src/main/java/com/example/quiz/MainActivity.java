@@ -13,56 +13,100 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
+    private String url="https://opentdb.com/api.php?amount=10&category=11&type=boolean";
+    private RequestQueue mRequestQueue;
     private TextView mTextQuestion;
+    private TextView genre;
+    private TextView difficulty;
     private Button btnTrue;
     private Button btnFalse;
     private ProgressBar mProgressBar;
     private TextView mStats;
     private int userScore;
-    private QuizModel[] questionCollection=new QuizModel[]{
-        new QuizModel(R.string.q1, true),
-        new QuizModel(R.string.q2, false),
-        new QuizModel(R.string.q3, true),
-        new QuizModel(R.string.q4, true),
-        new QuizModel(R.string.q5, false),
-        new QuizModel(R.string.q6, true),
-        new QuizModel(R.string.q7, false),
-        new QuizModel(R.string.q8, true),
-        new QuizModel(R.string.q9, true),
-        new QuizModel(R.string.q10, true),
-    };
-    final int USER_PROGRESS=(int)Math.ceil(100.0/(double) questionCollection.length); //increments progress bar by USER_PROGRESS each time answered
+    private TextView totalQuestions;
+    final int USER_PROGRESS = (int) Math.ceil(100.0 / (double) 10); //increments progress bar by USER_PROGRESS each time answered
     private int mQuestionIndex;
-    private int mQuizQuestion;
+    private String mQuizQuestion;
+    private List<QuizQuestion> questionCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRequestQueue= VolleySingleton.getInstance().getRequestQueue();
+        questionCollection=new ArrayList<QuizQuestion>();
+        JsonObjectRequest filmsJsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray results=response.getJSONArray("results");
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject question=results.getJSONObject(i);
+                        String questionText=question.getString("question");
+                        boolean answer=question.getBoolean("correct_answer");
+                        String genre=question.getString("category");
+                        String difficulty=question.getString("difficulty");
+                        QuizQuestion myQuestion=new QuizQuestion(questionText, answer, genre, difficulty);
+                        questionCollection.add(myQuestion);
+                    }
+                }catch (JSONException e){
+                    Log.e("error", e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mRequestQueue.add(filmsJsonObjectRequest);
 
 
-        mTextQuestion=(TextView)findViewById(R.id.question);
-        btnTrue=(Button) findViewById(R.id.trueButton);
-        btnFalse=(Button) findViewById(R.id.falseButton);
-        mProgressBar=(ProgressBar) findViewById(R.id.progressBar);
-        mStats=(TextView)findViewById(R.id.remainingQuestion);
+        genre = (TextView) findViewById(R.id.genre);
+        difficulty = (TextView) findViewById(R.id.difficulty);
+        mTextQuestion = (TextView) findViewById(R.id.question);
+        btnTrue = (Button) findViewById(R.id.trueButton);
+        btnFalse = (Button) findViewById(R.id.falseButton);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mStats = (TextView) findViewById(R.id.remainingQuestion);
+        totalQuestions = (TextView) findViewById(R.id.totalQuestion);
+        totalQuestions.setText("/"+questionCollection.size());
 
-        if(savedInstanceState!=null){
-            userScore=savedInstanceState.getInt("SCORE");
-            mQuestionIndex=savedInstanceState.getInt("CurrentIndex");
-            mStats.setText(userScore+"");
+        if (savedInstanceState != null) {
+            userScore = savedInstanceState.getInt("SCORE");
+            mQuestionIndex = savedInstanceState.getInt("CurrentIndex");
+            mStats.setText(userScore + "");
+        } else {
+            userScore = 0;
+            mQuestionIndex = 0;
         }
-        else{
-            userScore=0;
-            mQuestionIndex=0;
-        }
+//        mQuizQuestion = questionCollection.get(mQuestionIndex).getmQuestion();
+//        mTextQuestion.setText(mQuizQuestion);
+//        mProgressBar.incrementProgressBy(USER_PROGRESS);
+//        mStats.setText(Integer.toString(userScore));
+//        difficulty.setText("Difficulty: "+questionCollection.get(mQuestionIndex).getDifficulty());
+//        genre.setText("Genre: "+questionCollection.get(mQuestionIndex).getGenre());
 
-        QuizModel q1=questionCollection[mQuizQuestion];
-        mQuizQuestion=q1.getmQuestion();
-        mTextQuestion.setText(mQuizQuestion);
+
 
 
         btnTrue.setOnClickListener(new View.OnClickListener() {
@@ -81,14 +125,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private void changeQuestionOnButtonClick(){
-        mQuestionIndex=(mQuestionIndex+1)%questionCollection.length;
 
-        if(mQuestionIndex == 0){
-            AlertDialog.Builder quizAlert= new AlertDialog.Builder(MainActivity.this);
+    private void changeQuestionOnButtonClick() {
+        mQuestionIndex = (mQuestionIndex + 1) % questionCollection.size();
+
+        if (mQuestionIndex == 0) {
+            AlertDialog.Builder quizAlert = new AlertDialog.Builder(MainActivity.this);
             quizAlert.setCancelable(false);
             quizAlert.setTitle("The Quiz is finished");
-            quizAlert.setMessage("Your score is: "+userScore+"/"+questionCollection.length);
+            quizAlert.setMessage("Your score is: " + userScore + "/" + questionCollection.size());
             quizAlert.setPositiveButton("Finish the quiz", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -98,19 +143,20 @@ public class MainActivity extends AppCompatActivity {
             quizAlert.show();
         }
 
-        mQuizQuestion=questionCollection[mQuestionIndex].getmQuestion();
+        mQuizQuestion = questionCollection.get(mQuestionIndex).getmQuestion();
         mTextQuestion.setText(mQuizQuestion);
         mProgressBar.incrementProgressBy(USER_PROGRESS);
         mStats.setText(Integer.toString(userScore));
+        difficulty.setText("Difficulty: "+questionCollection.get(mQuestionIndex).getDifficulty());
+        genre.setText("Genre: "+questionCollection.get(mQuestionIndex).getGenre());
     }
 
-    private void evaluateAnswer(boolean userAnswer){
-        boolean correctAnswer=questionCollection[mQuestionIndex].ismAnswer();
-        if(correctAnswer==userAnswer){
+    private void evaluateAnswer(boolean userAnswer) {
+        boolean correctAnswer = questionCollection.get(mQuestionIndex).ismAnswer();
+        if (correctAnswer == userAnswer) {
             Toast.makeText(getApplicationContext(), R.string.CorrectAnswer, Toast.LENGTH_SHORT).show();
-            userScore=userScore+1;
-        }
-        else{
+            userScore = userScore + 1;
+        } else {
             Toast.makeText(getApplicationContext(), R.string.WrongAnswer, Toast.LENGTH_SHORT).show();
         }
     }
