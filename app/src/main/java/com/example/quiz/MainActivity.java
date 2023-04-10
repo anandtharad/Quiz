@@ -29,7 +29,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String url="https://opentdb.com/api.php?amount=10&category=11&type=boolean";
+    private String url = "https://opentdb.com/api.php?amount=10&category=11&type=boolean";
     private RequestQueue mRequestQueue;
     private TextView mTextQuestion;
     private TextView genre;
@@ -42,32 +42,38 @@ public class MainActivity extends AppCompatActivity {
     private int userScore;
     private TextView totalQuestions;
     final int USER_PROGRESS = (int) Math.ceil(100.0 / (double) 10); //increments progress bar by USER_PROGRESS each time answered
-    private int mQuestionIndex;
+    private int mQuestionIndex = 0;
     private String mQuizQuestion;
     private List<QuizQuestion> questionCollection;
+
+    private View loadingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initViews();
+        showLoading();
 
-        mRequestQueue= VolleySingleton.getInstance().getRequestQueue();
-        questionCollection=new ArrayList<QuizQuestion>();
-        JsonObjectRequest filmsJsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        mRequestQueue = VolleySingleton.getInstance().getRequestQueue();
+        questionCollection = new ArrayList<QuizQuestion>();
+        JsonObjectRequest filmsJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    JSONArray results=response.getJSONArray("results");
+                    JSONArray results = response.getJSONArray("results");
                     for (int i = 0; i < results.length(); i++) {
-                        JSONObject question=results.getJSONObject(i);
-                        String questionText=question.getString("question");
-                        boolean answer=question.getBoolean("correct_answer");
-                        String genre=question.getString("category");
-                        String difficulty=question.getString("difficulty");
-                        QuizQuestion myQuestion=new QuizQuestion(questionText, answer, genre, difficulty);
+                        JSONObject question = results.getJSONObject(i);
+                        String questionText = question.getString("question");
+                        boolean answer = question.getBoolean("correct_answer");
+                        String genre = question.getString("category");
+                        String difficulty = question.getString("difficulty");
+                        QuizQuestion myQuestion = new QuizQuestion(questionText, answer, genre, difficulty);
                         questionCollection.add(myQuestion);
                     }
-                }catch (JSONException e){
+                    hideLoading();
+                    setAllQuestions();
+                } catch (JSONException e) {
                     Log.e("error", e.getMessage());
                 }
 
@@ -75,22 +81,13 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                hideLoading();
                 error.printStackTrace();
             }
         });
+
+        totalQuestions.setText("/" + questionCollection.size());
         mRequestQueue.add(filmsJsonObjectRequest);
-
-
-        genre = (TextView) findViewById(R.id.genre);
-        difficulty = (TextView) findViewById(R.id.difficulty);
-        mTextQuestion = (TextView) findViewById(R.id.question);
-        btnTrue = (Button) findViewById(R.id.trueButton);
-        btnFalse = (Button) findViewById(R.id.falseButton);
-        restartButton = (Button) findViewById(R.id.restart_Button);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mStats = (TextView) findViewById(R.id.remainingQuestion);
-        totalQuestions = (TextView) findViewById(R.id.totalQuestion);
-        totalQuestions.setText("/"+questionCollection.size());
 
         if (savedInstanceState != null) {
             userScore = savedInstanceState.getInt("SCORE");
@@ -106,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
 //        mStats.setText(Integer.toString(userScore));
 //        difficulty.setText("Difficulty: "+questionCollection.get(mQuestionIndex).getDifficulty());
 //        genre.setText("Genre: "+questionCollection.get(mQuestionIndex).getGenre());
-
-
 
 
         btnTrue.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +131,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initViews() {
+        genre = findViewById(R.id.genre);
+        difficulty = findViewById(R.id.difficulty);
+        mTextQuestion = findViewById(R.id.question);
+        btnTrue = findViewById(R.id.trueButton);
+        btnFalse = findViewById(R.id.falseButton);
+        restartButton = findViewById(R.id.restart_Button);
+        mProgressBar = findViewById(R.id.progressBar);
+        mStats = findViewById(R.id.remainingQuestion);
+        totalQuestions = findViewById(R.id.totalQuestion);
+
+        loadingView = findViewById(R.id.progress_layout);
+    }
+
+    private void showLoading() {
+        loadingView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        loadingView.setVisibility(View.GONE);
+    }
+
     private void changeQuestionOnButtonClick() {
         mQuestionIndex = (mQuestionIndex + 1) % questionCollection.size();
 
@@ -152,13 +169,7 @@ public class MainActivity extends AppCompatActivity {
             });
             quizAlert.show();
         }
-
-        mQuizQuestion = questionCollection.get(mQuestionIndex).getmQuestion();
-        mTextQuestion.setText(mQuizQuestion);
-        mProgressBar.incrementProgressBy(USER_PROGRESS);
-        mStats.setText(Integer.toString(userScore));
-        difficulty.setText("Difficulty: "+questionCollection.get(mQuestionIndex).getDifficulty());
-        genre.setText("Genre: "+questionCollection.get(mQuestionIndex).getGenre());
+        setAllQuestions();
     }
 
     private void evaluateAnswer(boolean userAnswer) {
@@ -176,5 +187,14 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("SCORE", userScore);
         outState.putInt("CurrentIndex", mQuestionIndex);
+    }
+
+    private void setAllQuestions() {
+        mQuizQuestion = questionCollection.get(this.mQuestionIndex).getmQuestion();
+        mTextQuestion.setText(mQuizQuestion);
+        mProgressBar.incrementProgressBy(USER_PROGRESS);
+        mStats.setText(Integer.toString(userScore));
+        difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
+        genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
     }
 }
