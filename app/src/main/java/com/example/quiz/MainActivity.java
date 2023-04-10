@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        totalQuestions.setText("/" + questionCollection.size());
+
         mRequestQueue.add(filmsJsonObjectRequest);
 
         if (savedInstanceState != null) {
@@ -196,5 +196,6 @@ public class MainActivity extends AppCompatActivity {
         mStats.setText(Integer.toString(userScore));
         difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
         genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
+        totalQuestions.setText("/" + questionCollection.size());
     }
 }
