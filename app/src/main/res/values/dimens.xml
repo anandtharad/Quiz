@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spinner_margin">30dp</dimen>
+    <dimen name="spinner_height">35dp</dimen>
+    <dimen name="spinner_list_text_line_height">0.5dp</dimen>
+    <dimen name="spinner_text_line_margin">12dp</dimen>
+    <dimen name="spinner_text_left_margin">15dp</dimen>
+    <dimen name="proceed_top_margin">20dp</dimen>
+</resources>

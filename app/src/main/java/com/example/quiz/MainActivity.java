@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         mRequestQueue = VolleySingleton.getInstance().getRequestQueue();
         questionCollection = new ArrayList<QuizQuestion>();
-        JsonObjectRequest filmsJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest filmsJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Utils.Companion.getAppendedBaseUrl(String.valueOf(getIntent().getExtras().get("QUESTION_COUNT"))),
+            null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -120,13 +121,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        restartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+        restartButton.setOnClickListener(view -> {
+//                Intent intent = getIntent().;
+            startActivity(Utils.UserDetailIntent(MainActivity.this));
+            finish();
         });
 
     }

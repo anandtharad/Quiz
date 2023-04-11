@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/black"
+        android:textSize="32sp"
+        android:layout_marginTop="50dp"
+        android:textStyle="bold"
+        android:text="@string/welcome_to_quiz_app"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:padding="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@id/spinner_category"
+        android:text="@string/select_questions"/>
+
+    <Spinner
+        android:id="@+id/spinner_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/spinner_margin"
+        android:layout_marginRight="@dimen/spinner_margin"
+        android:layout_marginTop="@dimen/spinner_margin"
+        android:background="@drawable/spinner_border"
+        android:gravity="center"
+        android:minHeight="35dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnProceed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/proceed_top_margin"
+        android:background="@drawable/bg_proceed_btn"
+        android:text="@string/proceed"
+        app:layout_constraintEnd_toEndOf="@id/spinner_category"
+        app:layout_constraintStart_toStartOf="@id/spinner_category"
+        app:layout_constraintTop_toBottomOf="@id/spinner_category" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
