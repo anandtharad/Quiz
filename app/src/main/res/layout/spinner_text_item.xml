@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/text_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spinner_text_left_margin"
+        android:layout_marginTop="@dimen/spinner_text_line_margin"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/spinner_list_text_line_height"
+        android:layout_marginTop="@dimen/spinner_text_line_margin"
+        android:background="@color/colorGrey"
+        app:layout_constraintTop_toBottomOf="@+id/text_category" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         mRequestQueue = VolleySingleton.getInstance().getRequestQueue();
         questionCollection = new ArrayList<QuizQuestion>();
-        JsonObjectRequest filmsJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest filmsJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Utils.Companion.getAppendedBaseUrl(String.valueOf(getIntent().getExtras().get("QUESTION_COUNT"))),
+            null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -120,13 +121,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        restartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+        restartButton.setOnClickListener(view -> {
+//                Intent intent = getIntent().;
+            startActivity(Utils.UserDetailIntent(MainActivity.this));
+            finish();
         });
 
     }
@@ -190,12 +188,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAllQuestions() {
-        mQuizQuestion = questionCollection.get(this.mQuestionIndex).getmQuestion();
-        mTextQuestion.setText(mQuizQuestion);
-        mProgressBar.incrementProgressBy(USER_PROGRESS);
-        mStats.setText(Integer.toString(userScore));
-        difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
-        genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
-        totalQuestions.setText("/" + questionCollection.size());
+        if (!questionCollection.isEmpty()) {
+            mQuizQuestion = questionCollection.get(this.mQuestionIndex).getmQuestion();
+            mTextQuestion.setText(mQuizQuestion);
+            mProgressBar.incrementProgressBy(USER_PROGRESS);
+            mStats.setText(Integer.toString(userScore));
+            difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
+            genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
+            totalQuestions.setText("/" + questionCollection.size());
+        } else {
+            AlertDialog.Builder quizAlert = new AlertDialog.Builder(MainActivity.this);
+            quizAlert.setCancelable(false);
+            quizAlert.setTitle("Somethig went wrong");
+            quizAlert.setMessage("You can select different option till we sort out the issue from backend.Thank you");
+            quizAlert.setPositiveButton("Close", (dialog, which) -> {
+                startActivity(Utils.UserDetailIntent(MainActivity.this));
+                finish();
+            });
+            quizAlert.show();
+        }
     }
 }

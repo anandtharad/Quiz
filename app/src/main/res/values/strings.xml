@@ -2,4 +2,7 @@
     <string name="app_name">Quiz</string>
     <string name="CorrectAnswer">Well Done! Correct Answer!!!!</string>
     <string name="WrongAnswer">Oops! Wrong Answer</string>
+    <string name="proceed">Proceed</string>
+    <string name="welcome_to_quiz_app">Welcome to Quiz App</string>
+    <string name="select_questions">Please select the number of questions you would like to take the quiz for?</string>
 </resources>
