@@ -188,12 +188,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAllQuestions() {
-        mQuizQuestion = questionCollection.get(this.mQuestionIndex).getmQuestion();
-        mTextQuestion.setText(mQuizQuestion);
-        mProgressBar.incrementProgressBy(USER_PROGRESS);
-        mStats.setText(Integer.toString(userScore));
-        difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
-        genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
-        totalQuestions.setText("/" + questionCollection.size());
+        if (!questionCollection.isEmpty()) {
+            mQuizQuestion = questionCollection.get(this.mQuestionIndex).getmQuestion();
+            mTextQuestion.setText(mQuizQuestion);
+            mProgressBar.incrementProgressBy(USER_PROGRESS);
+            mStats.setText(Integer.toString(userScore));
+            difficulty.setText("Difficulty: " + questionCollection.get(this.mQuestionIndex).getDifficulty());
+            genre.setText("Genre: " + questionCollection.get(this.mQuestionIndex).getGenre());
+            totalQuestions.setText("/" + questionCollection.size());
+        } else {
+            AlertDialog.Builder quizAlert = new AlertDialog.Builder(MainActivity.this);
+            quizAlert.setCancelable(false);
+            quizAlert.setTitle("Somethig went wrong");
+            quizAlert.setMessage("You can select different option till we sort out the issue from backend.Thank you");
+            quizAlert.setPositiveButton("Close", (dialog, which) -> {
+                startActivity(Utils.UserDetailIntent(MainActivity.this));
+                finish();
+            });
+            quizAlert.show();
+        }
     }
 }
