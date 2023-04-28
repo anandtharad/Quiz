@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView mStats;
     private int userScore;
     private TextView totalQuestions;
-    final int USER_PROGRESS = (int) Math.ceil(100.0 / (double) 10); //increments progress bar by USER_PROGRESS each time answered
     private int mQuestionIndex = 0;
     private String mQuizQuestion;
     private List<QuizQuestion> questionCollection;
+    private int USER_PROGRESS; //increments progress bar by USER_PROGRESS each time answered
 
     private View loadingView;
 
@@ -72,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
                         QuizQuestion myQuestion = new QuizQuestion(questionText, answer, genre, difficulty);
                         questionCollection.add(myQuestion);
                     }
+                    USER_PROGRESS = (int) Math.ceil(100.0 / (double) questionCollection.size());
                     hideLoading();
+
                     setAllQuestions();
                 } catch (JSONException e) {
                     Log.e("error", e.getMessage());
